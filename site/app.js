@@ -13,6 +13,27 @@
   const state = {active: Number.isInteger(saved.active) && saved.active >= 0 && saved.active < 3 ? saved.active : 0, done: Array.from({length: 3}, (_, i) => saved.done?.[i] === true), notes: {}};
   activities.flatMap(a => a.fields).forEach(f => {state.notes[f.key] = typeof saved.notes?.[f.key] === 'string' ? saved.notes[f.key].slice(0, 4000) : '';});
   const frames = new Map();
+  // Give desktop activities a stable 1600×900 viewport, then fit the whole
+  // viewport into the available space. Cross-origin frames need no DOM access.
+  const desktopViewport = matchMedia('(min-width: 1000px)');
+  function fitFrames() {
+    const stage = $('frame-stage');
+    const scale = Math.min(stage.clientWidth / 1600, stage.clientHeight / 900);
+    frames.forEach(({frame}) => {
+      if (desktopViewport.matches && scale > 0) {
+        Object.assign(frame.style, {
+          width: '1600px', height: '900px',
+          left: `${(stage.clientWidth - 1600 * scale) / 2}px`,
+          top: `${(stage.clientHeight - 900 * scale) / 2}px`,
+          transform: `scale(${scale})`, transformOrigin: 'top left'
+        });
+      } else {
+        ['width', 'height', 'left', 'top', 'transform', 'transform-origin'].forEach(property => frame.style.removeProperty(property));
+      }
+    });
+  }
+  new ResizeObserver(fitFrames).observe($('frame-stage'));
+  desktopViewport.addEventListener('change', fitFrames);
   let toastTimer;
   const notify = message => { $('toast').textContent = message; $('toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => { $('toast').hidden = true; }, 2800); };
   function persist() {
@@ -52,6 +73,7 @@
     $('frame-stage').append(frame, loading);
     timer = setTimeout(() => { text.textContent = '打开较慢？可以点击下方独立打开。'; }, 12000);
     frames.set(index, {frame, loading});
+    fitFrames();
   }
   function activate(index, save = true) {
     state.active = index;

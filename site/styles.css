@@ -10,4 +10,55 @@
 @media(max-width:1050px){.lesson-name{display:none}.workspace{grid-template-columns:240px minmax(0,1fr);gap:12px;padding:0 16px}.header{padding:0 18px}.journey{padding:0 16px 16px;gap:8px}.journey-link{display:none}.station{padding:12px;gap:9px}.station-copy strong{font-size:16px}.station-icon{width:37px;height:37px;font-size:29px}.station-number{font-size:20px}.journey-progress{width:66px}.activity-heading>span:last-child,.switch-hint{display:none}.task-scroll{padding:0 16px 10px}.mission-art{margin-left:-16px;margin-right:-16px}.footer-end{display:none}.site-footer{justify-content:center}}
 @media(max-width:700px){.app-shell{min-height:680px}.header{height:66px;padding:0 13px}.brand{font-size:18px;gap:9px}.brand small{font-size:8px}.brand-mark{width:34px;height:34px;font-size:26px}.saved{display:none}.journey{padding:0 10px 12px;gap:6px}.station{padding:11px 8px;gap:6px;border-radius:12px}.station-icon{display:none}.station-copy small{font-size:8px;white-space:nowrap}.station-copy strong{font-size:13px;letter-spacing:0}.station-number{font-size:14px}.station-check{width:18px;height:18px;font-size:11px}.journey-progress{display:none}.workspace{padding:0 10px;grid-template-columns:1fr;gap:10px}.task-panel{max-height:225px}.task-scroll{padding:12px 15px}.mission-art,.task-lead{display:none}h1{font-size:17px;margin:5px 0}h1 br{display:none}.task-eyebrow{font-size:8px}.task-tag{font-size:8px}.notes-heading{margin-top:8px}.notes-heading span{font-size:8px}.note-label textarea{min-height:48px}.notes-hint{margin:0}.task-bottom{padding:8px 13px;display:flex;gap:10px}.complete-button{font-size:11px;padding:9px}.next-button{width:90px;flex-shrink:0;padding:0}.activity-toolbar{height:45px;padding:0 10px}.tool-button{font-size:9px;padding:6px}.activity-heading strong{font-size:11px}.activity-actions{gap:1px}.activity-bottom{height:29px;font-size:9px}.site-footer{height:32px;font-size:8px;gap:10px;padding:0 10px}.station.active::after{bottom:-5px;width:8px;height:8px}.workspace.focus-mode .activity-panel{grid-row:1/-1}}
 @media(max-width:700px){.workspace{grid-template-rows:225px minmax(0,1fr)}.workspace.focus-mode{grid-template-rows:minmax(0,1fr)}}
+/* Keep the classroom chrome compact so the activity gets most of the screen. */
+@media(min-width:701px){
+  .app-shell{min-height:480px}
+  .header{height:40px;padding:0 14px;gap:12px}
+  .brand{font-size:15px;gap:7px;letter-spacing:.5px}
+  .brand-mark{width:27px;height:27px;border-radius:9px;font-size:22px}
+  .brand small{display:none}
+  .icon-button{width:27px;height:27px;font-size:17px}
+  .journey{gap:8px;padding:0 14px 8px;height:52px}
+  .station{padding:6px 11px;border-radius:11px;gap:9px;height:40px}
+  .station-icon{width:27px;height:27px;border-radius:8px;font-size:22px}
+  .station-copy{flex-direction:row;align-items:center;gap:9px}
+  .station-copy small{font-size:10px}
+  .station-copy strong{font-size:14px;letter-spacing:.5px}
+  .station-number{font-size:17px}
+  .station-check{width:20px;height:20px;font-size:12px}
+  .station:hover{transform:translateY(-1px)}
+  .station.active::after{width:7px;height:7px;bottom:-4px}
+  .journey-link{display:none}
+  .journey-progress{width:76px;display:flex;align-items:center;gap:7px;padding-left:3px;position:relative}
+  .journey-progress>span{font-size:14px;white-space:nowrap}
+  .journey-progress small{font-size:9px;margin:0}
+  .journey-progress .progress-track{position:absolute;bottom:-6px;left:3px;right:0;height:3px}
+  .workspace{grid-template-columns:200px minmax(0,1fr);gap:10px;padding:0 14px}
+  .task-panel,.activity-panel{border-radius:12px}
+  .task-scroll{padding:13px 13px 10px}
+  .mission-art,.task-lead{display:none}
+  h1{font-size:19px;line-height:1.4;margin:9px 0 12px;letter-spacing:.5px}
+  h1 br{display:none}
+  .task-eyebrow{font-size:8px;letter-spacing:1px}
+  .task-tag{font-size:9px}
+  .task-list li{font-size:11px;line-height:1.8;margin:10px 0;padding-left:23px}
+  .task-list li::before{width:17px;height:17px;font-size:9px}
+  .question-card{padding:10px;margin:14px 0}
+  .question-card p{font-size:11px}
+  .notes-heading h2{font-size:12px}
+  .notes-heading span{display:none}
+  .note-label{font-size:11px}
+  .note-label textarea{min-height:65px;padding:8px;line-height:1.7}
+  .task-bottom{padding:8px 10px}
+  .complete-button{padding:9px 4px;font-size:11px;gap:4px}
+  .next-button{padding-top:7px;font-size:10px}
+  .activity-toolbar{height:32px;padding:0 11px}
+  .activity-heading strong{font-size:11px}
+  .activity-heading>span:last-child{font-size:9px}
+  .tool-button{font-size:10px;padding:4px 7px}
+  .activity-bottom{height:20px;font-size:9px;padding:0 11px}
+  .site-footer{height:24px;padding:0 16px;font-size:9px}
+  .frame-stage{overflow:hidden;background:#eaf0f8}
+}
+@media(min-width:701px) and (max-width:1100px){.station-copy small{display:none}.workspace{grid-template-columns:180px minmax(0,1fr)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
