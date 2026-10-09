@@ -1,6 +1,6 @@
 services:
   learning-sheet:
-    image: ghcr.io/alumos/chinacore-learning-sheet:latest
+    image: ghcr.io/alumos/chinacore-classroom:learning-sheet-latest
     platform: linux/amd64
     pull_policy: always
     ports:

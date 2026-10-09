@@ -22,7 +22,7 @@
 ## 在 1Panel 上用 Docker 部署
 
 1. 打开「容器 → 编排」，新建 `chinacore-learning-sheet`。
-2. 粘贴本仓库 [compose.1panel.yaml](compose.1panel.yaml)，点击创建。镜像为 `ghcr.io/alumos/chinacore-learning-sheet:latest`，Linux amd64。
+2. 粘贴本仓库 [compose.1panel.yaml](compose.1panel.yaml)，点击创建。镜像为 `ghcr.io/alumos/chinacore-classroom:learning-sheet-latest`，Linux amd64。
 3. 在 VPS 本机确认 `http://127.0.0.1:18082/` 能打开（如果远程直连端口测试，还需放行端口）。
 4. 新建 `learn.alumos.cn` 网站，反向代理到学习单服务，配置 HTTPS；CDN 接入由你完成。
 5. 将 `chinacore.alumos.cn` 反向代理到中国芯的 18080 端口，将 `fxh.alumos.cn` 反向代理到高小铁的 18081 端口，分别配置 HTTPS。
@@ -77,11 +77,13 @@ CDN 配置要点：两个互动服务的 `/api/` 路径不缓存、不缓冲，�
 
 ## 镜像发布与更新
 
-推送 `main` 后 GitHub Actions 检查脚本、资源引用，构建镜像并实际运行容器，验证启动配置、备案号和北斗文件，成功后发布 `latest` 和 `sha-提交短哈希`。PR 只构建测试。
+推送本仓库 `main` 后 GitHub Actions 检查脚本、资源引用并实际运行容器，验证启动配置、备案号和北斗文件。公开镜像由中国芯仓库的 `Publish public learning sheet image` 工作流构建：从本仓库 `main` 检出源码，验证后发布 `ghcr.io/alumos/chinacore-classroom:learning-sheet-latest` 和对应 `learning-sheet-sha-` 标签。
+
+学习单后续更新：先推送本仓库并确认测试通过，再在中国芯仓库的 Actions 页面手动运行上述工作流。两者源码独立，只共用已公开的镜像包；中国芯自身的 `latest` 标签不会被学习单工作流覆盖。
 
 在 1Panel 拉取最新镜像并重建本学习单编排即可更新。学习记录保存在学生浏览器，不在容器中；刷新会重载活动 iframe，切换活动不会。清理浏览器数据或更换设备会失去本机记录，可先下载。
 
-首次发布后如果 GHCR 包不是 Public，请在 GitHub Packages 设置中改为 Public，或配置拉取凭据。
+新学习单镜像使用已公开的 `chinacore-classroom` 镜像包，可匿名拉取。旧的 `chinacore-learning-sheet:latest` 镜像包不再作为部署入口。
 
 ## 本地预览与源码部署
 
