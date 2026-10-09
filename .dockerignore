@@ -1,0 +1,6 @@
+.git
+.github
+artifacts
+node_modules
+README.md
+*.test.cjs

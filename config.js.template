@@ -1,0 +1,4 @@
+window.LEARNING_SHEET_CONFIG = {
+  classroomUrl: '${CLASSROOM_URL}',
+  searchUrl: '${SEARCH_URL}'
+};

@@ -1,0 +1,10 @@
+services:
+  learning-sheet:
+    image: chinacore-learning-sheet:local
+    build: .
+    ports:
+      - "18082:80"
+    environment:
+      CLASSROOM_URL: "https://chinacore.alumos.cn/join"
+      SEARCH_URL: "https://fxh.alumos.cn/"
+    restart: unless-stopped

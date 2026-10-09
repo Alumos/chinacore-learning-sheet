@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#07121e">
+  <link rel="icon" href="assets/satellite-geo.svg" type="image/svg+xml">
+  <title>北斗拼装台 V2 · 原子钟现场实验</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="engine.js"></script>
+  <script defer src="scene.js"></script>
+  <script defer src="clock-model.js"></script>
+  <script defer src="clock-scene.js"></script>
+  <script defer src="assets/asset-map.js"></script>
+  <script defer src="game.js"></script>
+</head>
+<body>
+<main class="game-shell">
+  <header class="masthead">
+    <a class="brand" href="#" aria-label="北斗拼装台首页"><span class="brand-star" aria-hidden="true">✦</span><span>北斗拼装台<small>BEIDOU ASSEMBLY LAB</small></span></a>
+    <div class="header-actions"><button id="sound-button" class="icon-button" aria-pressed="false" aria-label="开启音效">音效关</button><button id="fullscreen-button" class="icon-button">全屏</button><button id="help-button" class="icon-button">任务指南</button></div>
+  </header>
+  <section class="intro"><div><p class="eyebrow">一场从太空到生活的拼装任务</p><h1>点亮你的<span>北斗</span></h1><p class="subtitle">把散落的组件送回它们的位置，为海上救援建立可靠导航。</p></div><div class="assembly-progress"><div><strong id="installed-count">0</strong><span> / 9</span></div><p id="progress-label">组件已归位</p><div class="progress-track" role="progressbar" aria-label="拼装进度" aria-valuemin="0" aria-valuemax="9" aria-valuenow="0"><span id="progress-fill"></span></div></div></section>
+  <nav class="mission-steps" aria-label="任务进度"><span class="active" data-step="assembly"><b>01</b> 拼装系统</span><span data-step="running"><b>02</b> 启动导航</span><span data-step="challenge"><b>03</b> 故障实验</span></nav>
+  <section class="play-layout">
+    <div class="world-column">
+      <div class="world-frame" id="world-frame">
+        <div class="world-topline"><span><i id="state-dot"></i><span id="state-label">等待装配</span></span><span class="simulation-label">教学模拟 · 非真实比例</span></div>
+        <canvas id="world" width="1200" height="750" aria-label="北斗拼装场景：太空中的卫星，地面站，以及车船与手机用户终端。可以拖动组件或使用下方键盘安装按钮。"></canvas>
+        <div class="scene-loading" id="scene-loading">正在准备组件…</div>
+        <div class="world-hint" id="world-hint"><span class="hint-dot"></span>从右侧拿起组件，拖到场景中的轮廓</div>
+        <div class="world-view" aria-label="场景视角"><button class="active" data-view="all" aria-pressed="true">全景</button><button data-view="space" aria-pressed="false">太空</button><button data-view="ground" aria-pressed="false">地面</button><button data-view="user" aria-pressed="false">应用</button></div>
+      </div>
+      <div class="scene-controls"><button id="start-button" class="primary-button" disabled><span aria-hidden="true">▶</span> 启动北斗导航</button><button id="pause-button" class="secondary-button" disabled>暂停演示</button><button id="hint-button" class="secondary-button" aria-pressed="false">显示安装提示</button><button id="reset-button" class="quiet-button">重新拼装</button></div>
+      <section class="clock-lab" id="clock-lab" aria-label="原子钟现场实验" hidden>
+        <div class="clock-lab-header"><div><p class="eyebrow">原子钟现场实验</p><h2>一点时间偏差，位置会偏到哪里？</h2></div><button id="clock-exit" class="secondary-button">返回系统全景</button></div>
+        <div class="clock-lab-body">
+          <div class="clock-slider-area"><label for="clock-error-range"><span>亲手增大一颗卫星的时间基准偏差</span><strong><span id="clock-error-value">0</span><small> ns</small></strong></label><input id="clock-error-range" type="range" min="0" max="600" step="1" value="0" aria-describedby="clock-model-note"><div class="clock-ticks" aria-hidden="true"><span>0 · 同步</span><span>200 ns</span><span>400 ns</span><span>600 ns</span></div><div class="clock-slider-actions"><button id="clock-zero" class="secondary-button">校准原子钟 · 误差归零</button><span id="clock-live-hint" role="status" aria-live="polite">先从零开始，慢慢拖动滑杆。</span></div></div>
+          <div class="clock-readouts"><div><span>这一颗卫星的测距误差</span><strong><span id="clock-range-error">0.0</span><small> 米</small></strong></div><div><span id="clock-position-label">船舶的平面定位偏差</span><strong class="clock-position-value"><span id="clock-position-error">0.0</span><small> 米</small></strong></div></div>
+        </div>
+        <div class="clock-targets" role="group" aria-label="重点观察的用户终端"><span>重点观察</span><button data-clock-target="car" aria-pressed="false">车辆</button><button data-clock-target="ship" class="active" aria-pressed="true">航船</button><button data-clock-target="phone" aria-pressed="false">手机</button></div>
+        <p class="clock-model-note" id="clock-model-note">假设一颗卫星存在未校正钟差，其他观测正常。以四颗卫星的平面教学模型解算位置和接收机钟差；画面位移按局部尺度展示，真实定位偏差还取决于卫星几何与校正条件。</p>
+      </section>
+      <div class="message-box" id="message-box" role="status" aria-live="polite"><span class="message-icon" aria-hidden="true">✦</span><div><strong id="message-title">你的任务，从第一个组件开始</strong><p id="message-text">点击或拖动一个组件。观察形状，判断它的作用，找到它在系统中的位置。</p></div></div>
+      <details class="keyboard-controls"><summary>键盘安装 / 点选安装位置</summary><div id="install-targets"></div></details>
+      <section class="challenge-panel" id="challenge-panel" hidden><div class="challenge-header"><div><p class="eyebrow">关键技术，为什么重要？</p><h2>给运行中的北斗做一次故障实验</h2></div><span class="experiment-count" id="experiment-count">已观察 0 / 2</span></div><div class="experiment-buttons"><button data-experiment="clock"><img src="assets/clock.svg" alt="原子钟组件"><span><strong>卫星的“心脏”不准了</strong><small>亲手调节钟差，观察位置漂移</small></span><b aria-hidden="true">↗</b></button><button data-experiment="ground"><img src="assets/station-inject.svg" alt="地面站组件"><span><strong>地面维护中断了</strong><small>监控与信息更新受影响</small></span><b aria-hidden="true">↗</b></button></div></section>
+    </div>
+    <aside class="parts-panel"><div class="parts-heading"><div><p class="eyebrow">装配工作台</p><h2 id="tray-title">组件库</h2></div><span id="tray-count">9 件</span></div><div class="parts-tabs" role="group" aria-label="筛选组件"><button class="active" data-group="all" aria-pressed="true">全部</button><button data-group="space" aria-pressed="false">空间</button><button data-group="ground" aria-pressed="false">地面</button><button data-group="user" aria-pressed="false">用户</button></div><div class="parts-grid" id="parts-grid"></div><div class="part-detail" id="part-detail"><span class="detail-kicker">装配提示</span><h3 id="detail-title">每个组件，都有自己的职责</h3><p id="detail-text">太空提供导航信号，地面负责监控维护，终端接收信号并计算位置。</p></div></aside>
+  </section>
+  <footer class="footer"><span>从认识组成，到理解协作，再到掌握关键技术。</span><button id="sources-button">教学与素材来源</button></footer>
+</main>
+<div class="drag-sprite" id="drag-sprite" hidden><img alt="正在安装的组件"><span></span></div>
+<dialog id="help-dialog"><form method="dialog"><button class="dialog-close" aria-label="关闭指南">×</button></form><p class="eyebrow">任务指南</p><h2>亲手，装好一个北斗系统</h2><ol class="guide-list"><li><b>拿起组件</b><span>拖动组件到场景中的轮廓。手机和平板可以直接拖动，也可以先点组件，再点安装位置。</span></li><li><b>让系统运行</b><span>完成 9 件组件后，启动导航，观察轨道、地面维护链路和卫星向终端播发的信号。</span></li><li><b>亲手制造时间偏差</b><span>点击“卫星的心脏不准了”，直接进入现场实验。拖动钟差滑杆，比较真实位置与导航估计位置，再将误差归零。</span></li></ol><p class="guide-note">三个卫星图形代表三类轨道，三类地面站与三个终端代表功能类型；数量、比例、轨道速度和故障效果均为教学示意。</p><button class="primary-button" id="help-done">开始拼装</button></dialog>
+<dialog id="experiment-dialog"><form method="dialog"><button class="dialog-close" aria-label="关闭实验">×</button></form><p class="eyebrow" id="experiment-kicker">故障实验</p><h2 id="experiment-title"></h2><p class="experiment-question" id="experiment-question"></p><div class="answers" id="answers"></div><div class="experiment-result" id="experiment-result" hidden><strong id="result-title"></strong><p id="result-text"></p></div><div class="experiment-dialog-actions"><button class="primary-button" id="observe-button" disabled>在场景中观察</button></div></dialog>
+<dialog id="sources-dialog"><form method="dialog"><button class="dialog-close" aria-label="关闭来源">×</button></form><p class="eyebrow">教学与素材来源</p><h2>科学依据与模拟边界</h2><ul class="source-list"><li>《系统自主可控的重要意义》PDF 第 1–3 页，教材第 63–65 页：北斗的意义、原子钟及系统组成。</li><li><a href="http://www.beidou.gov.cn/xt/xtjs/" target="_blank" rel="noopener">北斗官网 · 系统介绍</a>：空间段、地面段、用户段，以及自主、开放、兼容、渐进的建设原则。</li><li>组件为手工绘制的 SVG 教学插画，外形不代表特定型号。地球纹理来自 <a href="https://github.com/mrdoob/three.js/tree/dev/examples/textures/planets" target="_blank" rel="noopener">three.js 示例资源</a>，使用范围以原素材授权为准。</li><li>运行展示压缩了时间与空间尺度。GEO 的地面相对静止以地球自转参考系理解；三维轨道、真实服务覆盖及系统冗余未在此完整建模。</li><li>原子钟实验采用四颗卫星观测的平面简化定位解算，同时估计接收机钟差。一颗卫星存在未校正钟差；其他观测正常。三类用户展示不同的示例几何条件，画面位移按局部尺度展示。地面维护故障仍为定性示意。</li><li>自主可控意味着掌握关键技术与运行维护能力，同时可以开放合作，并与其他导航系统兼容。</li></ul></dialog>
+</body>
+</html>

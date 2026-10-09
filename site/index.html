@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#edf3ff">
+  <title>未来探索局 · 自主可控课堂学习单</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="config.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="app-shell" id="app-shell">
+    <header class="header">
+      <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">✦</span><span>未来探索局<small>每一个小发现，都通向大未来</small></span></a>
+      <div class="lesson-name"><span class="tiny-dot"></span>今天的探索 <b>系统自主可控的重要意义</b></div>
+      <div class="header-actions"><span class="saved" id="save-status" role="status">学习记录保存在本机</span><button class="icon-button" id="export-button" title="下载我的学习记录" aria-label="下载我的学习记录">↓</button></div>
+    </header>
+
+    <nav class="journey" aria-label="课堂活动">
+      <button class="station active" data-activity="0" aria-current="step"><span class="station-icon satellite" aria-hidden="true">✧</span><span class="station-copy"><small>第一站 · 动手实验</small><strong>点亮北斗</strong></span><span class="station-number">01</span><span class="station-check" hidden aria-label="已完成">✓</span></button>
+      <span class="journey-link" aria-hidden="true">···</span>
+      <button class="station" data-activity="1"><span class="station-icon train" aria-hidden="true">⇥</span><span class="station-copy"><small>第二站 · AI 探究</small><strong>探秘复兴号</strong></span><span class="station-number">02</span><span class="station-check" hidden aria-label="已完成">✓</span></button>
+      <span class="journey-link" aria-hidden="true">···</span>
+      <button class="station" data-activity="2"><span class="station-icon chip" aria-hidden="true">▦</span><span class="station-copy"><small>第三站 · 分享观点</small><strong>我的中国芯</strong></span><span class="station-number">03</span><span class="station-check" hidden aria-label="已完成">✓</span></button>
+      <div class="journey-progress"><span id="progress-count">0 / 3</span><small>探索足迹</small><div class="progress-track"><i id="progress-fill"></i></div></div>
+    </nav>
+
+    <main class="workspace" id="workspace">
+      <aside class="task-panel" id="task-panel" aria-label="活动任务与学习记录">
+        <div class="task-scroll">
+          <div class="mission-art" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><span class="art-star star-one">✦</span><span class="art-star star-two">✧</span><svg viewBox="0 0 140 120" class="mission-satellite"><g transform="rotate(-24 70 60)"><path d="M25 37h29v43H25zM86 37h29v43H86z" fill="#5187ff" stroke="#244697" stroke-width="3"/><path d="M35 37v43m10-43v43m51-43v43m10-43v43M25 51h29m-29 15h29m32-15h29m-29 15h29" stroke="#a6ccff" stroke-width="2"/><rect x="55" y="41" width="30" height="36" rx="8" fill="#fff1b3" stroke="#244697" stroke-width="3"/><path d="M70 41V24m-10 0h20M70 77v12" fill="none" stroke="#244697" stroke-width="3" stroke-linecap="round"/><circle cx="64" cy="55" r="2" fill="#244697"/><circle cx="76" cy="55" r="2" fill="#244697"/><path d="M65 63q5 5 10 0" fill="none" stroke="#244697" stroke-width="2" stroke-linecap="round"/></g></svg><span class="art-caption">小小探索家，出发！</span></div>
+          <div class="task-eyebrow"><span id="task-kicker">MISSION 01</span><span class="task-tag" id="task-tag">动手发现</span></div>
+          <h1 id="task-title">让你的北斗<br>亮起来。</h1>
+          <p class="task-lead" id="task-lead">拼出一个系统，发现每个关键部件的力量。</p>
+          <ol class="task-list" id="task-list"></ol>
+          <div class="question-card"><span class="question-spark" aria-hidden="true">✦</span><strong id="question-title">想一想</strong><p id="question-text"></p></div>
+          <section class="notes-section"><div class="notes-heading"><h2>我的发现</h2><span>边探索，边记录</span></div><div id="note-fields"></div><p class="notes-hint">记录留在这台设备上，可用右上角 ↓ 下载。</p></section>
+        </div>
+        <div class="task-bottom"><button class="complete-button" id="complete-button" aria-pressed="false"><span aria-hidden="true">✓</span><span id="complete-label">我已完成这一站</span></button><button class="next-button" id="next-button">去下一站 <span aria-hidden="true">→</span></button></div>
+      </aside>
+
+      <section class="activity-panel" aria-label="活动页面">
+        <div class="activity-toolbar"><div class="activity-heading"><span class="live-dot" aria-hidden="true"></span><strong id="activity-title">北斗拼装台</strong><span id="activity-caption">动手拼装 · 观察实验</span></div><div class="activity-actions"><button class="tool-button" id="focus-button" aria-expanded="true" aria-controls="task-panel"><span aria-hidden="true">◫</span><span id="focus-label">收起任务</span></button><button class="tool-button" id="fullscreen-button"><span aria-hidden="true">⛶</span>全屏</button><a class="tool-button open-link" id="open-link" href="beidou/" target="_blank" rel="noopener noreferrer">独立打开 <span aria-hidden="true">↗</span></a></div></div>
+        <div class="frame-stage" id="frame-stage"></div>
+        <div class="activity-bottom"><span id="activity-tip">观察原子钟偏差，看看定位会发生什么变化。</span><span class="switch-hint">切换活动，保留当前页面 <span aria-hidden="true">↔</span></span></div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><span>动手发现 · 自主思考 · 勇敢表达</span><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">苏ICP备2021038338号-1</a><span class="footer-end">未来，从你的好奇心开始 <span aria-hidden="true">✦</span></span></footer>
+  </div>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <div class="celebration" id="celebration" aria-hidden="true"></div>
+</body>
+</html>

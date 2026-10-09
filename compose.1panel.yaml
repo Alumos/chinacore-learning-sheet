@@ -1,0 +1,18 @@
+services:
+  learning-sheet:
+    image: ghcr.io/alumos/chinacore-learning-sheet:latest
+    platform: linux/amd64
+    pull_policy: always
+    ports:
+      - "18082:80"
+    environment:
+      CLASSROOM_URL: "https://chinacore.alumos.cn/join"
+      SEARCH_URL: "https://fxh.alumos.cn/"
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
