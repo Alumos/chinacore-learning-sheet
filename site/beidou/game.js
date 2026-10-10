@@ -16,6 +16,9 @@
     if (saved?.version === 2) state = E.restored(saved.state);
     else if (legacy?.version === 1) { state = E.restored(legacy.state); state.fault = null; state.clockNs = 0; }
   } catch (_) {}
+  // Old V2 saves may contain the retired ground fault experiment; resume them cleanly.
+  if (state.fault === 'ground' || state.challenge === 'ground') E.recover(state);
+  state.observed = state.observed.filter(id => id === 'clock');
   const directClockPreview = new URLSearchParams(window.location.search).has('clock-lab');
   if (directClockPreview) { state = E.INITIAL(); E.PARTS.forEach(p => E.install(state,p.id,p.id)); E.start(state); state.missionTime = 14; }
   const imagePath = p => `assets/${window.BEIDOU_ASSET_FILES?.[p.file] || `${p.file}.svg`}`;
@@ -122,7 +125,7 @@
     $('pause-button').textContent = clock.active ? '返回系统全景' : state.fault ? '恢复系统' : state.paused ? '继续演示' : '暂停演示';
     $('hint-button').disabled = active;
     $('challenge-panel').hidden = !active;
-    $('experiment-count').textContent = `已观察 ${state.observed.length} / 2`;
+    $('experiment-count').textContent = `已观察 ${state.observed.includes('clock') ? 1 : 0} / 1`;
     document.querySelectorAll('[data-experiment]').forEach(b => b.classList.toggle('observed', state.observed.includes(b.dataset.experiment)));
     $('state-label').textContent = clock.active ? state.clockNs===0?'原子钟实验 · 时间同步':'原子钟实验 · 定位偏差增大' : !active ? state.placed.length === 9 ? '系统装配完成' : '等待装配' : state.fault ? '故障实验观察中' : state.paused ? '运行已暂停' : state.phase === 'complete' ? '救援任务完成' : '北斗导航运行中';
     $('state-dot').className = state.fault ? 'fault' : active ? 'running' : '';
@@ -238,40 +241,9 @@
   $('clock-exit').addEventListener('click',leaveClock);
   document.querySelectorAll('[data-clock-target]').forEach(b=>b.addEventListener('click',()=>{clock.target=b.dataset.clockTarget;updateClockReadouts();}));
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&clock.active&&!document.querySelector('dialog[open]'))leaveClock();});
-  const experiments = {
-    ground: {
-      title: '地面监控与更新中断，会怎样？', question: '卫星还在运行。如果地面段暂时无法持续监控和更新导航信息，终端会立即全部停止定位吗？',
-      answers: ['所有用户会立即、同时失去全部定位能力', '完全没有影响，地面段可以永久省略', '已有信息可能短时可用，持续维护与可靠性会受影响'], correct: 2,
-      result: '地面段承担持续监控、运行管理和信息更新。短时中断不等于所有终端立刻失去定位，但更新和维护长期受影响可能降低服务可靠性。影响还取决于故障范围、持续时间与系统冗余。',
-    },
-  };
-  document.querySelectorAll('[data-experiment]').forEach(b => b.addEventListener('click', () => {
-    if (state.phase === 'assembly') return;
-    if(b.dataset.experiment==='clock'){enterClock();return;}
-    const id = b.dataset.experiment, data = experiments[id]; state.challenge = id; state.challengeAnswered = false;
-    $('experiment-title').textContent = data.title; $('experiment-question').textContent = data.question;
-    $('experiment-result').hidden = true; $('observe-button').disabled = true;
-    $('answers').replaceChildren(); data.answers.forEach((answer, index) => {
-      const button = document.createElement('button'); button.type = 'button'; button.textContent = answer;
-      button.addEventListener('click', () => {
-        state.challengeAnswered = true;
-        $('answers').querySelectorAll('button').forEach(a => { a.className = ''; a.setAttribute('aria-pressed', 'false'); });
-        const correct = index === data.correct; button.className = correct ? 'selected' : 'incorrect'; button.setAttribute('aria-pressed', 'true');
-        $('experiment-result').hidden = false; $('result-title').textContent = correct ? '判断正确，看看其中的原因' : '这个判断需要调整'; $('result-text').textContent = data.result;
-        $('observe-button').disabled = false; tone(correct);
-      });
-      $('answers').append(button);
-    });
-    $('experiment-dialog').showModal(); updateUI();
-  }));
-  $('observe-button').addEventListener('click', () => {
-    const id = state.challenge; if (!state.challengeAnswered || !id) return;
-    E.setFault(state, id); state.challenge = null; state.challengeAnswered = false; faultAge = 0;
-    notify('观察：更新中断影响持续可靠性', `${experiments[id].result} 为方便比较，救援任务进度暂时暂停；橙色范围为定性示意。`);
-    if (width < 540) setView('user');
-    $('experiment-dialog').close(); updateUI(); persist();
+  document.querySelector('[data-experiment="clock"]')?.addEventListener('click', () => {
+    if (state.phase !== 'assembly') enterClock();
   });
-  $('experiment-dialog').addEventListener('close', () => { state.challenge = null; state.challengeAnswered = false; updateUI(); });
   function resize() {
     const rect = canvas.getBoundingClientRect(), ratio = Math.min(window.devicePixelRatio || 1, 2);
     width = rect.width; height = rect.height; canvas.width = Math.round(width * ratio); canvas.height = Math.round(height * ratio); context.setTransform(ratio, 0, 0, ratio, 0, 0);
@@ -310,7 +282,7 @@
         if(clock.leaving&&clock.progress===0)finishClock();
       }else S.draw(context, { width, height, state, assets, earth, silhouettes, time: reducedMotion ? 0 : orbitTime, selected, hovered, hints, animations, focus, clockError:state.clockNs, faultAge });
       if (lastPhase !== state.phase) {
-        if (state.phase === 'complete') { notify('救援船已抵达，任务完成', '三个组成部分协作，才能提供可靠的导航服务。现在试着做一次原子钟和地面维护故障实验，思考关键技术为什么要自主掌握。', 'success'); tone(); persist(); }
+        if (state.phase === 'complete') { notify('救援船已抵达，任务完成', '三个组成部分协作，才能提供可靠的导航服务。现在试着做一次原子钟实验，观察关键技术为什么要自主掌握。', 'success'); tone(); persist(); }
         updateUI(); lastPhase = state.phase;
       }
       if (timestamp - lastPersist > 4000 && state.phase === 'running') { persist(); lastPersist = timestamp; }
